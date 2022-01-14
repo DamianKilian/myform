@@ -1,0 +1,5 @@
+services:
+    MyForm\Controller\MyFormController:
+        class: MyForm\Controller\MyFormController
+        # arguments:
+        #     - "@doctrine.cache.provider"

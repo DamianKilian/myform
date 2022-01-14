@@ -1,0 +1,13 @@
+{
+    "name": "you/myform",
+    "description": "myform...",
+    "autoload": {
+        "psr-4": {
+            "MyForm\\Controller\\": "src/Controller/"
+        }
+    },
+    "config": {
+        "prepend-autoloader": false
+    },
+    "type": "prestashop-module"
+}
