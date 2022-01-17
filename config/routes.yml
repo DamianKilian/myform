@@ -2,4 +2,4 @@ myform:
     path: /myform/
     methods: [GET,POST]
     defaults:
-      _controller: 'MyForm\Controller\MyFormController::myformAction'
+      _controller: 'MyForm\Controller\Admin\MyFormController::myformAction'

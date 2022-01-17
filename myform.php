@@ -3,6 +3,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+require_once __DIR__ . '/vendor/autoload.php';
+
 class MyForm extends Module
 {
     public function __construct()
@@ -24,23 +26,40 @@ class MyForm extends Module
         $this->description = $this->l('Description of my form.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-
-        // if (!Configuration::get('MYFORM_HTML')) {
-        //     $this->warning = $this->l('No name provided');
-        // }
     }
 
     public function install()
     {
-        return (parent::install()
-            && Configuration::updateValue('MYFORM_HTML', 'Wprowadzony html')
-        );
+        return $this->installTables() && parent::install();
     }
 
     public function uninstall()
     {
-        return (parent::uninstall()
-            && Configuration::deleteByName('MYFORM_HTML')
-        );
+        return $this->removeTables() && parent::uninstall();
+    }
+
+    private function installTables()
+    {
+        $sqlQueries = [];
+        $sqlQueries[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'my_form_html` (
+            id INT AUTO_INCREMENT NOT NULL,
+            html LONGTEXT NOT NULL,
+            PRIMARY KEY(id)
+        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;';
+        $sqlQueries[] = "INSERT INTO " . _DB_PREFIX_ . "my_form_html (html) VALUES ('')";
+
+        foreach ($sqlQueries as $query) {
+            if (false === Db::getInstance()->execute($query)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function removeTables()
+    {
+        $query = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'my_form_html`';
+        return Db::getInstance()->execute($query);
     }
 }

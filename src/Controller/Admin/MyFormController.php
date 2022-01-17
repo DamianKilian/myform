@@ -1,32 +1,27 @@
 <?php
 
-namespace MyForm\Controller;
+namespace MyForm\Controller\Admin;
 
-// use PrestaShop\PrestaShop\Adapter\Configuration;
-
-use PrestaShop\PrestaShop\Adapter\Entity\Configuration;
+use Context;
+use MyForm\Entity\MyFormHtml;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\Request;
 
 class MyFormController extends FrameworkBundleAdminController
 {
-    // private $cache;
-
-    // // you can use symfony DI to inject services
-    // public function __construct(CacheProvider $cache)
-    // {
-    //     $this->cache = $cache;
-    // }
-
     public function myformAction(Request $request)
     {
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        $repoMyFormHtml = $em->getRepository(MyFormHtml::class);
+        $htmlEntity = $repoMyFormHtml->findOneById(1);
         if ($request->isMethod('post')) {
             $newHtml = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $request->request->get('myform'));
-            Configuration::updateValue('MYFORM_HTML', $newHtml);
+            $htmlEntity->setHtml($newHtml);
+            $em->flush();
         }
 
         return $this->render('@Modules/myform/templates/admin/myform.html.twig', [
-            'html' => Configuration::get('MYFORM_HTML'),
+            'html' => $htmlEntity->getHtml(),
         ]);
     }
 }
