@@ -7,6 +7,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 class MyForm extends Module
 {
+
+    private $dbInstance;
+
     public function __construct()
     {
         $this->name = 'myform';
@@ -26,6 +29,7 @@ class MyForm extends Module
         $this->description = $this->l('Description of my form.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
+        $this->dbInstance = Db::getInstance();
     }
 
     public function install()
@@ -49,7 +53,7 @@ class MyForm extends Module
         $sqlQueries[] = "INSERT INTO " . _DB_PREFIX_ . "my_form_html (html) VALUES ('')";
 
         foreach ($sqlQueries as $query) {
-            if (false === Db::getInstance()->execute($query)) {
+            if (false === $this->dbInstance->execute($query)) {
                 return false;
             }
         }
@@ -60,6 +64,6 @@ class MyForm extends Module
     private function removeTables()
     {
         $query = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'my_form_html`';
-        return Db::getInstance()->execute($query);
+        return $this->dbInstance->execute($query);
     }
 }
